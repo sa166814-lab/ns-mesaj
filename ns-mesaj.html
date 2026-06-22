@@ -372,16 +372,21 @@ function renderFriends(){
       list.appendChild(item);
       // presence
       db.ref("presence/"+f).on("value",ps=>{ const d=$("dot_"+f); if(d) d.classList.toggle("on",!!(ps.val()&&ps.val().online)); });
-      // son mesaj + okunmamış (arka plan dinleyici)
+      // son mesaj + okunmamış + banner (canlı dinleyici)
       if(!chatListeners[f]){ chatListeners[f]=true;
-        db.ref("chats/"+cid+"/messages").limitToLast(1).on("child_added",sn=>{
-          const m=sn.val(); const pv=$("pv_"+f), tm=$("tm_"+f);
+        db.ref("chats/"+cid+"/messages").orderByChild("ts").limitToLast(1).on("value",snap=>{
+          let m=null; snap.forEach(c=>{ m=c.val(); m._key=c.key; });
+          if(!m) return;
+          const pv=$("pv_"+f), tm=$("tm_"+f);
           if(pv) pv.textContent = preview(m); if(tm) tm.textContent=fmtTime(m.ts);
-          // sadece karşıdan gelen ve YENİ (son 20 sn) mesajlarda bildir
-          const fresh = m.ts && (Date.now()-m.ts < 20000);
-          if(m.sender!==me.user && fresh){
+          // aynı mesajı iki kez bildirme
+          if(lastMsgTs[f]===m._key) return;
+          const isNew = lastMsgTs[f]!==undefined;   // ilk yüklemede bildirme
+          lastMsgTs[f]=m._key;
+          const fresh = m.ts && (Date.now()-m.ts < 25000);
+          if(isNew && m.sender!==me.user && fresh){
             if(curFriend!==f){ unread[f]=(unread[f]||0)+1; updateBadge(f); }
-            notify(u.name, m, f);   // her ekranda banner
+            notify(u.name, m, f);
           }
         });
       }
@@ -405,24 +410,31 @@ window.addFriend=async()=>{
 };
 
 /* ---------- SOHBET ---------- */
+let chatMsgRef=null, chatMsgHandler=null;
+function detachChatView(){
+  if(chatMsgRef && chatMsgHandler){ chatMsgRef.off("child_added", chatMsgHandler); }
+  chatMsgRef=null; chatMsgHandler=null;
+}
 function openChat(f,u){
+  detachChatView();
   curFriend=f; curChat=chatId(me.user,f); unread[f]=0; updateBadge(f);
   show("chat"); $("fab").classList.add("hide"); $("stickerbar").classList.add("hide");
   $("cName").textContent=u.name; avatar($("cAv"),u.name,u.color,38);
   $("feed").innerHTML=""; lastDay=""; lastSeenEl=null; typingEl=null;
   db.ref("presence/"+f).on("value",ps=>{ $("cStatus").textContent=(ps.val()&&ps.val().online)?"çevrim içi":"çevrim dışı"; });
-  // mesajlar
-  db.ref("chats/"+curChat+"/messages").off();
-  db.ref("chats/"+curChat+"/messages").orderByChild("ts").limitToLast(80).on("child_added",sn=>{
+  // mesajlar — sadece BU sohbet görünümüne ait dinleyici (listeyi öldürmeden)
+  chatMsgRef = db.ref("chats/"+curChat+"/messages").orderByChild("ts").limitToLast(80);
+  chatMsgHandler = sn=>{
     addMessage(sn.val());
     if(sn.val().sender===f) db.ref("chats/"+curChat+"/lastRead/"+me.user).set(firebase.database.ServerValue.TIMESTAMP);
-  });
+  };
+  chatMsgRef.on("child_added", chatMsgHandler);
   // typing & seen
   db.ref("chats/"+curChat+"/typing/"+f).on("value",s=>toggleTyping(!!s.val()));
   db.ref("chats/"+curChat+"/lastRead/"+f).on("value",s=>updateSeen(s.val()));
   db.ref("chats/"+curChat+"/lastRead/"+me.user).set(firebase.database.ServerValue.TIMESTAMP);
 }
-function backToList(){ db.ref("chats/"+curChat+"/messages").off(); curFriend=null; curChat=null;
+function backToList(){ detachChatView(); curFriend=null; curChat=null;
   show("list"); $("fab").classList.remove("hide"); }
 
 function addMessage(m){
