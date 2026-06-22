@@ -488,14 +488,21 @@ function onPhoto(e){ const file=e.target.files[0]; if(!file)return;
 /* ---------- bildirim ---------- */
 function notify(title,m,fromUser){
   const text = preview(m);
-  // 1) Uygulama içi üstten banner (her zaman, izin gerekmez)
+  // 1) Uygulama içi üstten banner (her zaman)
   showBanner(title, text, fromUser);
-  // 2) OS bildirimi (izin varsa) — arka plan/kilitli için
+  // 2) Telefon bildirim paneline düşen sistem bildirimi
+  osNotify(title, text, fromUser);
+}
+async function osNotify(title, text, fromUser){
+  if(!("Notification" in window) || Notification.permission!=="granted") return;
+  const opts={ body:text, icon:"./icon-192.png", badge:"./icon-192.png",
+    tag:"ns-"+(fromUser||""), renotify:true, vibrate:[120,60,120], data:{from:fromUser} };
   try{
-    if(("Notification"in window) && Notification.permission==="granted"){
-      new Notification(title,{body:text,icon:"./icon-192.png",tag:"ns-"+(fromUser||"")});
-    }
+    let reg = await navigator.serviceWorker.getRegistration();
+    if(!reg) reg = await navigator.serviceWorker.ready;
+    if(reg && reg.showNotification){ await reg.showNotification(title, opts); return; }
   }catch(e){}
+  try{ new Notification(title, opts); }catch(e){}
 }
 let bannerTimer=null;
 function showBanner(title, text, fromUser){
