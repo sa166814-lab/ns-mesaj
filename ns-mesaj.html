@@ -142,6 +142,25 @@
   .inbanner.show{transform:translateY(0);opacity:1}
   .inbanner .ib-t{font-family:'Fraunces';font-weight:600;font-size:15px;margin-bottom:2px}
   .inbanner .ib-b{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row{position:relative}
+  .msgmenu{position:absolute;top:-2px;background:none;border:none;color:var(--muted);
+    font-size:16px;line-height:1;padding:4px 6px;cursor:pointer;opacity:.55}
+  .row.me .msgmenu{left:-26px} .row.you .msgmenu{right:-26px}
+  .bubble.deleted{font-style:italic;opacity:.7;background:var(--surface2)!important;color:var(--muted)!important}
+  .acts{position:fixed;inset:0;z-index:55;display:none} .acts.open{display:block}
+  .acts .veil{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+  .acts .card{position:absolute;left:10px;right:10px;bottom:0;background:var(--surface);
+    border-radius:20px;margin-bottom:calc(10px + env(safe-area-inset-bottom));overflow:hidden;animation:up .22s}
+  .acts .ah{padding:14px 18px 8px;font-size:13px;color:var(--muted);font-family:'Fraunces'}
+  .acts button.ai{width:100%;text-align:left;background:none;border:none;color:var(--text);
+    padding:15px 18px;font-size:16px;font-family:'Inter';cursor:pointer;border-top:1px solid var(--line)}
+  .acts button.ai:active{background:var(--surface2)}
+  .acts button.ai.danger{color:#e2706a}
+  .acts .cancel{margin-top:8px;border-radius:16px}
+  .pin{font-size:12px;color:var(--luna);margin-left:4px}
+  .archline{display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--muted);
+    border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
+  .archline:active{background:var(--surface2)}
 </style>
 </head>
 <body data-theme="gece">
@@ -211,6 +230,7 @@
 </div>
 
 <div class="lightbox" id="lightbox"><img id="lightImg" src=""></div>
+<div class="acts" id="acts"><div class="veil" id="actsVeil"></div><div class="card" id="actsCard"></div></div>
 <div class="toast" id="toast"></div>
 
 <button class="fab hide" id="fab">＋</button>
@@ -240,6 +260,8 @@ const COLORS=["#4f8a79","#c2718a","#cf7a52","#5a78c2","#9a6fbf","#3f9a8a","#c086
 const STICKERS=["❤️","😘","🥰","😍","😂","🤗","😴","👍","🎉","🌹","☕","🍕","🐦","💚","🙈","😢","🔥","💋","🤙","🫶"];
 let db=null, me=null, isLogin=false, pickedColor=COLORS[0];
 let curChat=null, curFriend=null, chatListeners={}, friends={}, unread={}, lastMsgTs={}, friendUsers={};
+let curMsgs=[], myHidden={}, hiddenRef=null, curSeenTs=0;
+let pinnedSet={}, archivedSet={}, showArchive=false;
 let typingTimer=null, lastSeenEl=null, lastMineTs=0, typingEl=null, lastDay="";
 
 const $=id=>document.getElementById(id);
@@ -320,6 +342,9 @@ function initApp(){
   db.ref("friends/"+me.user).on("value",s=>{ friends=s.val()||{}; renderFriends(); });
   // istekler
   db.ref("requests/"+me.user).on("value",s=>renderRequests(s.val()||{}));
+  // sabitlenen / arşivlenen tercihleri
+  db.ref("prefs/"+me.user+"/pinned").on("value",s=>{ pinnedSet=s.val()||{}; renderFriends(); });
+  db.ref("prefs/"+me.user+"/archived").on("value",s=>{ archivedSet=s.val()||{}; renderFriends(); });
   // bildirim izni iste
   if("Notification" in window && Notification.permission==="default") Notification.requestPermission();
   registerPush();
@@ -356,44 +381,86 @@ window.accept=async k=>{ await db.ref("friends/"+me.user+"/"+k).set(true);
 window.reject=async k=>{ await db.ref("requests/"+me.user+"/"+k).remove(); };
 
 function renderFriends(){
-  const keys=Object.keys(friends); $("listEmpty").classList.toggle("hide",keys.length>0);
+  let keys=Object.keys(friends);
+  const archived = keys.filter(f=>archivedSet[f]);
+  let visible = showArchive ? archived : keys.filter(f=>!archivedSet[f]);
+  visible.sort((a,b)=> (pinnedSet[b]?1:0)-(pinnedSet[a]?1:0));
+  $("listEmpty").classList.toggle("hide", keys.length>0);
   const list=$("chatList"); list.innerHTML="";
-  keys.forEach(f=>{
+  if(!showArchive && archived.length){
+    const al=document.createElement("div"); al.className="archline";
+    al.textContent="🗄️ Arşivlenenler ("+archived.length+")";
+    al.onclick=()=>{ showArchive=true; renderFriends(); }; list.appendChild(al);
+  }
+  if(showArchive){
+    const al=document.createElement("div"); al.className="archline";
+    al.textContent="‹ Sohbetlere dön"; al.onclick=()=>{ showArchive=false; renderFriends(); }; list.appendChild(al);
+  }
+  visible.forEach(f=>{
+    const item=document.createElement("div"); item.className="chat-item"; item.id="ci_"+f;
+    item.innerHTML=`<div class="av"></div><div class="info"><div class="nm" id="nm_${f}"></div>
+      <div class="pv" id="pv_${f}">@${f}</div></div>
+      <div class="right"><span class="tm" id="tm_${f}"></span><span id="bd_${f}"></span></div>`;
+    list.appendChild(item);
+    item.onclick=()=>{ if(friendUsers[f]) openChat(f,friendUsers[f]); };
+    bindHold(item, ()=>chatMenu(f));
     db.ref("users/"+f).get().then(s=>{
-      const u=s.val()||{name:f,color:"#666"};
-      friendUsers[f]=u;
-      const cid=chatId(me.user,f);
-      const item=document.createElement("div"); item.className="chat-item"; item.id="ci_"+f;
-      item.innerHTML=`<div class="av"></div><div class="info"><div class="nm">${u.name}
-        <span class="dot" id="dot_${f}"></span></div><div class="pv" id="pv_${f}">@${f}</div></div>
-        <div class="right"><span class="tm" id="tm_${f}"></span><span id="bd_${f}"></span></div>`;
+      const u=s.val()||{name:f,color:"#666"}; friendUsers[f]=u;
+      const nm=$("nm_"+f);
+      if(nm) nm.innerHTML=`${u.name} <span class="dot" id="dot_${f}"></span>${pinnedSet[f]?'<span class="pin">📌</span>':''}`;
       avatar(item.querySelector(".av"),u.name,u.color,46);
-      item.onclick=()=>openChat(f,u);
-      list.appendChild(item);
-      // presence
       db.ref("presence/"+f).on("value",ps=>{ const d=$("dot_"+f); if(d) d.classList.toggle("on",!!(ps.val()&&ps.val().online)); });
-      // son mesaj + okunmamış + banner (canlı dinleyici)
-      if(!chatListeners[f]){ chatListeners[f]=true;
-        db.ref("chats/"+cid+"/messages").orderByChild("ts").limitToLast(1).on("value",snap=>{
-          let m=null; snap.forEach(c=>{ m=c.val(); m._key=c.key; });
-          if(!m) return;
-          const pv=$("pv_"+f), tm=$("tm_"+f);
-          if(pv) pv.textContent = preview(m); if(tm) tm.textContent=fmtTime(m.ts);
-          // aynı mesajı iki kez bildirme
-          if(lastMsgTs[f]===m._key) return;
-          const isNew = lastMsgTs[f]!==undefined;   // ilk yüklemede bildirme
-          lastMsgTs[f]=m._key;
-          const fresh = m.ts && (Date.now()-m.ts < 25000);
-          if(isNew && m.sender!==me.user && fresh){
-            if(curFriend!==f){ unread[f]=(unread[f]||0)+1; updateBadge(f); }
-            notify(u.name, m, f);
-          }
-        });
-      }
     });
+    if(!chatListeners[f]){ chatListeners[f]=true;
+      const cid=chatId(me.user,f);
+      db.ref("chats/"+cid+"/messages").orderByChild("ts").limitToLast(1).on("value",snap=>{
+        let m=null; snap.forEach(c=>{ m=c.val(); m._key=c.key; });
+        if(!m) return;
+        const pv=$("pv_"+f), tm=$("tm_"+f);
+        if(pv) pv.textContent = m.deleted? "🚫 Mesaj silindi" : preview(m); if(tm) tm.textContent=fmtTime(m.ts);
+        if(lastMsgTs[f]===m._key) return;
+        const isNew = lastMsgTs[f]!==undefined;
+        lastMsgTs[f]=m._key;
+        const fresh = m.ts && (Date.now()-m.ts < 25000);
+        if(isNew && m.sender!==me.user && fresh && !m.deleted){
+          if(curFriend!==f){ unread[f]=(unread[f]||0)+1; updateBadge(f); }
+          notify((friendUsers[f]&&friendUsers[f].name)||f, m, f);
+        }
+      });
+    }
   });
 }
-function preview(m){ return m.type==="image"?"📷 Fotoğraf":m.type==="sticker"?"🌟 Çıkartma":m.text; }
+/* uzun basma algılama */
+function bindHold(el, fn){
+  let t=null;
+  const start=()=>{ t=setTimeout(()=>{ try{navigator.vibrate&&navigator.vibrate(40);}catch(e){} fn(); }, 500); };
+  const cancel=()=>{ clearTimeout(t); };
+  el.addEventListener("touchstart",start,{passive:true});
+  el.addEventListener("touchend",cancel); el.addEventListener("touchmove",cancel);
+  el.addEventListener("contextmenu",e=>{ e.preventDefault(); fn(); });
+}
+/* sohbet menüsü (sabitle/arşivle/temizle) */
+function chatMenu(f){
+  const u=friendUsers[f]||{name:f};
+  const items=[
+    { label: pinnedSet[f] ? "📌 Sabiti kaldır" : "📌 Sabitle",
+      on:()=>db.ref("prefs/"+me.user+"/pinned/"+f).set(pinnedSet[f]?null:true) },
+    { label: archivedSet[f] ? "🗄️ Arşivden çıkar" : "🗄️ Arşivle",
+      on:()=>db.ref("prefs/"+me.user+"/archived/"+f).set(archivedSet[f]?null:true) },
+    { label:"🧹 Sohbeti temizle", danger:true, on:()=>clearChat(f) }
+  ];
+  actionSheet(u.name, items);
+}
+function clearChat(f){
+  if(!confirm("Bu sohbetteki tüm mesajlar silinsin mi? (iki tarafta da kalkar)")) return;
+  const cid=chatId(me.user,f);
+  db.ref("chats/"+cid+"/messages").remove();
+  db.ref("chats/"+cid+"/hidden").remove();
+  lastMsgTs[f]=undefined;
+  const pv=$("pv_"+f); if(pv) pv.textContent="@"+f; const tm=$("tm_"+f); if(tm) tm.textContent="";
+  toast("Sohbet temizlendi");
+}
+function preview(m){ return m.deleted?"🚫 Mesaj silindi":m.type==="image"?"📷 Fotoğraf":m.type==="sticker"?"🌟 Çıkartma":m.text; }
 function updateBadge(f){ const b=$("bd_"+f); if(!b)return;
   b.innerHTML = unread[f]? `<span class="badge">${unread[f]}</span>`:""; }
 
@@ -412,50 +479,91 @@ window.addFriend=async()=>{
 /* ---------- SOHBET ---------- */
 let chatMsgRef=null, chatMsgHandler=null;
 function detachChatView(){
-  if(chatMsgRef && chatMsgHandler){ chatMsgRef.off("child_added", chatMsgHandler); }
-  chatMsgRef=null; chatMsgHandler=null;
+  if(chatMsgRef && chatMsgHandler){ chatMsgRef.off("value", chatMsgHandler); }
+  if(hiddenRef){ hiddenRef.off(); }
+  chatMsgRef=null; chatMsgHandler=null; hiddenRef=null;
 }
 function openChat(f,u){
   detachChatView();
   curFriend=f; curChat=chatId(me.user,f); unread[f]=0; updateBadge(f);
   show("chat"); $("fab").classList.add("hide"); $("stickerbar").classList.add("hide");
   $("cName").textContent=u.name; avatar($("cAv"),u.name,u.color,38);
-  $("feed").innerHTML=""; lastDay=""; lastSeenEl=null; typingEl=null;
+  $("feed").innerHTML=""; lastDay=""; lastSeenEl=null; typingEl=null; curMsgs=[]; curSeenTs=0;
   db.ref("presence/"+f).on("value",ps=>{ $("cStatus").textContent=(ps.val()&&ps.val().online)?"çevrim içi":"çevrim dışı"; });
-  // mesajlar — sadece BU sohbet görünümüne ait dinleyici (listeyi öldürmeden)
-  chatMsgRef = db.ref("chats/"+curChat+"/messages").orderByChild("ts").limitToLast(80);
-  chatMsgHandler = sn=>{
-    addMessage(sn.val());
-    if(sn.val().sender===f) db.ref("chats/"+curChat+"/lastRead/"+me.user).set(firebase.database.ServerValue.TIMESTAMP);
+  // bende silinen mesajlar
+  hiddenRef = db.ref("chats/"+curChat+"/hidden/"+me.user);
+  hiddenRef.on("value", s=>{ myHidden = s.val()||{}; renderFeed(); });
+  // mesajlar — tam yeniden çizim (silme canlı yansır)
+  chatMsgRef = db.ref("chats/"+curChat+"/messages").orderByChild("ts").limitToLast(120);
+  chatMsgHandler = snap=>{
+    curMsgs=[]; snap.forEach(c=>{ const v=c.val(); v._key=c.key; curMsgs.push(v); });
+    renderFeed();
+    const last=curMsgs[curMsgs.length-1];
+    if(last && last.sender===f) db.ref("chats/"+curChat+"/lastRead/"+me.user).set(firebase.database.ServerValue.TIMESTAMP);
   };
-  chatMsgRef.on("child_added", chatMsgHandler);
+  chatMsgRef.on("value", chatMsgHandler);
   // typing & seen
   db.ref("chats/"+curChat+"/typing/"+f).on("value",s=>toggleTyping(!!s.val()));
-  db.ref("chats/"+curChat+"/lastRead/"+f).on("value",s=>updateSeen(s.val()));
+  db.ref("chats/"+curChat+"/lastRead/"+f).on("value",s=>{ curSeenTs=s.val()||0; applySeen(); });
   db.ref("chats/"+curChat+"/lastRead/"+me.user).set(firebase.database.ServerValue.TIMESTAMP);
 }
 function backToList(){ detachChatView(); curFriend=null; curChat=null;
   show("list"); $("fab").classList.remove("hide"); }
 
-function addMessage(m){
-  const feed=$("feed"); const d=new Date(m.ts||Date.now()); const dk=d.toLocaleDateString("tr-TR");
-  if(dk!==lastDay){ lastDay=dk; const s=document.createElement("div"); s.className="daysep"; s.textContent=dayLabel(d); feed.appendChild(s); }
-  const mine=m.sender===me.user;
-  const row=document.createElement("div"); row.className="row "+(mine?"me":"you");
-  const b=document.createElement("div"); b.className="bubble";
-  if(m.type==="image"){ const img=document.createElement("img"); img.src=m.data; img.onclick=()=>{ $("lightImg").src=m.data; $("lightbox").classList.add("open"); }; b.appendChild(img); }
-  else if(m.type==="sticker"){ b.className="bubble sticker"; b.textContent=m.text; }
-  else b.textContent=m.text;
-  row.appendChild(b); feed.appendChild(row);
-  const st=document.createElement("div"); st.className="stamp"; st.textContent=fmtTime(m.ts); feed.appendChild(st);
-  if(mine){ lastSeenEl=st; lastMineTs=m.ts; }
+function renderFeed(){
+  const feed=$("feed"); feed.innerHTML=""; lastDay=""; lastSeenEl=null; lastMineTs=0; typingEl=null;
+  curMsgs.forEach(m=>{
+    if(myHidden[m._key]) return;               // bende silinmiş
+    const d=new Date(m.ts||Date.now()); const dk=d.toLocaleDateString("tr-TR");
+    if(dk!==lastDay){ lastDay=dk; const s=document.createElement("div"); s.className="daysep"; s.textContent=dayLabel(d); feed.appendChild(s); }
+    const mine=m.sender===me.user;
+    const row=document.createElement("div"); row.className="row "+(mine?"me":"you");
+    const b=document.createElement("div"); b.className="bubble";
+    if(m.deleted){ b.classList.add("deleted"); b.textContent="🚫 Mesaj silindi"; }
+    else if(m.type==="image"){ const img=document.createElement("img"); img.src=m.data; img.onclick=()=>{ $("lightImg").src=m.data; $("lightbox").classList.add("open"); }; b.appendChild(img); }
+    else if(m.type==="sticker"){ b.className="bubble sticker"; b.textContent=m.text; }
+    else b.textContent=m.text;
+    row.appendChild(b);
+    if(!m.deleted){
+      const mb=document.createElement("button"); mb.className="msgmenu"; mb.textContent="⌄";
+      mb.onclick=(e)=>{ e.stopPropagation(); openMsgMenu(m._key, m); };
+      row.appendChild(mb);
+    }
+    feed.appendChild(row);
+    const st=document.createElement("div"); st.className="stamp"; st.textContent=fmtTime(m.ts); feed.appendChild(st);
+    if(mine){ lastSeenEl=st; lastMineTs=m.ts; }
+  });
+  applySeen();
   feed.scrollTop=feed.scrollHeight;
 }
-function updateSeen(rt){ document.querySelectorAll(".seen").forEach(x=>x.remove());
-  if(lastSeenEl&&rt&&rt>=lastMineTs){ const s=document.createElement("div"); s.className="seen"; s.textContent="Görüldü ✓✓"; lastSeenEl.after(s); } }
+function applySeen(){ document.querySelectorAll(".seen").forEach(x=>x.remove());
+  if(lastSeenEl && curSeenTs && curSeenTs>=lastMineTs){ const s=document.createElement("div"); s.className="seen"; s.textContent="Görüldü ✓✓"; lastSeenEl.after(s); } }
+
+/* ---- mesaj menüsü ---- */
+function openMsgMenu(key, m){
+  const items=[];
+  if(m.type==="text"){ items.push({label:"📋 Kopyala", on:()=>{ try{ navigator.clipboard.writeText(m.text); toast("Kopyalandı"); }catch(e){} }}); }
+  items.push({label:"🙈 Bende sil", on:()=>{ db.ref("chats/"+curChat+"/hidden/"+me.user+"/"+key).set(true); }});
+  if(m.sender===me.user){ items.push({label:"🗑️ Herkeste sil", danger:true, on:()=>{
+    db.ref("chats/"+curChat+"/messages/"+key).update({deleted:true,text:null,data:null,type:"text"}); }}); }
+  actionSheet("Mesaj", items);
+}
 function toggleTyping(on){ const feed=$("feed");
   if(on&&!typingEl){ typingEl=document.createElement("div"); typingEl.className="typing"; typingEl.innerHTML="<span></span><span></span><span></span>"; feed.appendChild(typingEl); feed.scrollTop=feed.scrollHeight; }
   else if(!on&&typingEl){ typingEl.remove(); typingEl=null; } }
+
+/* ---- genel action sheet ---- */
+function actionSheet(title, items){
+  const card=$("actsCard");
+  let h=`<div class="ah">${title}</div>`;
+  items.forEach((it,i)=>{ h+=`<button class="ai${it.danger?' danger':''}" data-i="${i}">${it.label}</button>`; });
+  h+=`<button class="ai cancel" data-i="-1">Vazgeç</button>`;
+  card.innerHTML=h;
+  card.querySelectorAll("button").forEach(b=>{ b.onclick=()=>{
+    const i=parseInt(b.dataset.i); closeActs(); if(i>=0 && items[i]) items[i].on(); }; });
+  $("acts").classList.add("open");
+}
+function closeActs(){ $("acts").classList.remove("open"); }
 
 const PUSH_WORKER="https://ns-push.samet-ak09-07.workers.dev";
 function notifyPeer(obj){
@@ -538,6 +646,7 @@ $("fileIn").addEventListener("change",onPhoto);
 $("stickerBtn").onclick=()=>$("stickerbar").classList.toggle("hide");
 $("logoutBtn").onclick=()=>{ localStorage.removeItem("ns_user"); localStorage.removeItem("ns_pin"); location.reload(); };
 $("lightbox").onclick=()=>$("lightbox").classList.remove("open");
+$("actsVeil").onclick=closeActs;
 $("notifBtn").onclick=()=>{ if("Notification"in window) Notification.requestPermission().then(p=>toast(p==="granted"?"Bildirim açık":"İzin verilmedi")); };
 document.querySelectorAll("#themeSeg button").forEach(b=>b.onclick=()=>setTheme(b.dataset.t));
 STICKERS.forEach(s=>{ const b=document.createElement("button"); b.textContent=s; b.onclick=()=>sendSticker(s); $("stickerbar").appendChild(b); });
