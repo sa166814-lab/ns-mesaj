@@ -433,8 +433,15 @@ function toggleTyping(on){ const feed=$("feed");
   if(on&&!typingEl){ typingEl=document.createElement("div"); typingEl.className="typing"; typingEl.innerHTML="<span></span><span></span><span></span>"; feed.appendChild(typingEl); feed.scrollTop=feed.scrollHeight; }
   else if(!on&&typingEl){ typingEl.remove(); typingEl=null; } }
 
+const PUSH_WORKER="https://ns-push.samet-ak09-07.workers.dev";
+function notifyPeer(obj){
+  try{
+    fetch(PUSH_WORKER,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({to:curFriend,title:me.name,body:preview(obj)})}).catch(()=>{});
+  }catch(e){}
+}
 function pushMsg(obj){ obj.ts=firebase.database.ServerValue.TIMESTAMP; db.ref("chats/"+curChat+"/messages").push(obj);
-  db.ref("chats/"+curChat+"/typing/"+me.user).set(false); }
+  db.ref("chats/"+curChat+"/typing/"+me.user).set(false); notifyPeer(obj); }
 function sendText(){ const el=$("msgIn"); const t=el.value.trim(); if(!t)return;
   pushMsg({sender:me.user,type:"text",text:t}); el.value=""; el.style.height="auto"; $("sendBtn").disabled=true; }
 function sendSticker(s){ pushMsg({sender:me.user,type:"sticker",text:s}); }
