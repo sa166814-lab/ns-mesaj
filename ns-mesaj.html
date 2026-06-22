@@ -134,6 +134,14 @@
   .toast.show{opacity:1}
   .warn{background:#b5483f;color:#fff;font-size:12.5px;text-align:center;padding:7px 14px;display:none}
   .warn.show{display:block}
+  .inbanner{position:fixed;top:0;left:8px;right:8px;z-index:80;
+    margin-top:calc(8px + env(safe-area-inset-top));
+    background:var(--surface2);color:var(--text);border:1px solid var(--line);
+    border-radius:16px;padding:12px 16px;box-shadow:0 8px 28px rgba(0,0,0,.45);
+    transform:translateY(-160%);opacity:0;transition:transform .3s ease,opacity .3s ease;cursor:pointer}
+  .inbanner.show{transform:translateY(0);opacity:1}
+  .inbanner .ib-t{font-family:'Fraunces';font-weight:600;font-size:15px;margin-bottom:2px}
+  .inbanner .ib-b{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body data-theme="gece">
@@ -231,7 +239,7 @@ const firebaseConfig = {
 const COLORS=["#4f8a79","#c2718a","#cf7a52","#5a78c2","#9a6fbf","#3f9a8a","#c0863f","#bf5f5f"];
 const STICKERS=["❤️","😘","🥰","😍","😂","🤗","😴","👍","🎉","🌹","☕","🍕","🐦","💚","🙈","😢","🔥","💋","🤙","🫶"];
 let db=null, me=null, isLogin=false, pickedColor=COLORS[0];
-let curChat=null, curFriend=null, chatListeners={}, friends={}, unread={}, lastMsgTs={};
+let curChat=null, curFriend=null, chatListeners={}, friends={}, unread={}, lastMsgTs={}, friendUsers={};
 let typingTimer=null, lastSeenEl=null, lastMineTs=0, typingEl=null, lastDay="";
 
 const $=id=>document.getElementById(id);
@@ -353,6 +361,7 @@ function renderFriends(){
   keys.forEach(f=>{
     db.ref("users/"+f).get().then(s=>{
       const u=s.val()||{name:f,color:"#666"};
+      friendUsers[f]=u;
       const cid=chatId(me.user,f);
       const item=document.createElement("div"); item.className="chat-item"; item.id="ci_"+f;
       item.innerHTML=`<div class="av"></div><div class="info"><div class="nm">${u.name}
@@ -368,8 +377,11 @@ function renderFriends(){
         db.ref("chats/"+cid+"/messages").limitToLast(1).on("child_added",sn=>{
           const m=sn.val(); const pv=$("pv_"+f), tm=$("tm_"+f);
           if(pv) pv.textContent = preview(m); if(tm) tm.textContent=fmtTime(m.ts);
-          if(m.sender!==me.user && curFriend!==f){
-            unread[f]=(unread[f]||0)+1; updateBadge(f); notify(u.name,m);
+          // sadece karşıdan gelen ve YENİ (son 20 sn) mesajlarda bildir
+          const fresh = m.ts && (Date.now()-m.ts < 20000);
+          if(m.sender!==me.user && fresh){
+            if(curFriend!==f){ unread[f]=(unread[f]||0)+1; updateBadge(f); }
+            notify(u.name, m, f);   // her ekranda banner
           }
         });
       }
@@ -462,10 +474,33 @@ function onPhoto(e){ const file=e.target.files[0]; if(!file)return;
   }; img.src=rd.result; }; rd.readAsDataURL(file); e.target.value=""; }
 
 /* ---------- bildirim ---------- */
-function notify(title,m){
-  if(!("Notification"in window)||Notification.permission!=="granted")return;
-  if(!document.hidden && curFriend) return; // ekranda aktifsek sessiz
-  try{ new Notification(title,{body:preview(m),icon:"./icon-192.png",tag:"ns"}); }catch(e){}
+function notify(title,m,fromUser){
+  const text = preview(m);
+  // 1) Uygulama içi üstten banner (her zaman, izin gerekmez)
+  showBanner(title, text, fromUser);
+  // 2) OS bildirimi (izin varsa) — arka plan/kilitli için
+  try{
+    if(("Notification"in window) && Notification.permission==="granted"){
+      new Notification(title,{body:text,icon:"./icon-192.png",tag:"ns-"+(fromUser||"")});
+    }
+  }catch(e){}
+}
+let bannerTimer=null;
+function showBanner(title, text, fromUser){
+  let el=document.getElementById("inbanner");
+  if(!el){
+    el=document.createElement("div"); el.id="inbanner"; el.className="inbanner";
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`<div class="ib-t"></div><div class="ib-b"></div>`;
+  el.querySelector(".ib-t").textContent=title;
+  el.querySelector(".ib-b").textContent=text;
+  el.classList.add("show");
+  el.onclick=()=>{ el.classList.remove("show");
+    if(fromUser){ const u=friendUsers[fromUser]; if(u) openChat(fromUser,u); } };
+  try{ navigator.vibrate && navigator.vibrate(120); }catch(e){}
+  clearTimeout(bannerTimer);
+  bannerTimer=setTimeout(()=>el.classList.remove("show"),4000);
 }
 
 /* ---------- olaylar ---------- */
