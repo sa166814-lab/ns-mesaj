@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.samet.nsmesaj",
+    "sha256_cert_fingerprints": ["EA:12:AB:3F:5E:60:C9:CA:B4:7A:3D:0B:51:32:AA:74:F7:90:BA:5A:D9:C9:F5:7E:6B:63:70:CB:5E:4C:E3:93"]
+  }
+}]
