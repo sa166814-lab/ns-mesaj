@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#15131c">
+<meta name="theme-color" content="#14161f">
 <title>NS-Mesaj</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -11,49 +11,60 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#15131c;--bg2:#1d1a28;--surface:#221f2e;--surface2:#2c2839;--line:#34303f;
-    --text:#ece8f1;--muted:#9a93a8;--accent:#4f8a79;--accent2:#c2718a;--luna:#e8c64a;--radius:20px}
-  [data-theme="gunduz"]{--bg:#f6f1e9;--bg2:#efe8dc;--surface:#fff;--surface2:#f3ede2;--line:#e3d9c8;
-    --text:#2b2620;--muted:#8a8170;--accent:#3f7d6c;--accent2:#b85f7a;--luna:#cf9f2a}
-  [data-theme="gunbatimi"]{--bg:#1c1218;--bg2:#271620;--surface:#2c1a26;--surface2:#3a2230;--line:#482c3a;
-    --text:#f6e7ec;--muted:#c79aab;--accent:#cf7a52;--accent2:#b8557d;--luna:#f0b15a}
+  :root{--bg:#14161f;--bg2:#1b1e2a;--surface:#1f2330;--surface2:#2a2f3f;--line:#333a4d;
+    --text:#eef1f7;--muted:#8b93a7;--accent:#ff7a1a;--accent2:#ff9a45;--luna:#ffc24a;
+    --grad:linear-gradient(135deg,#ff9a3d,#ff6a00);--radius:18px}
+  [data-theme="gunduz"]{--bg:#f6f3ee;--bg2:#efe9e0;--surface:#fff;--surface2:#f2ece2;--line:#e4dccd;
+    --text:#26221c;--muted:#8a8170;--accent:#f2700f;--accent2:#ff9a45;--luna:#e09a1e;
+    --grad:linear-gradient(135deg,#ff9a3d,#f2700f)}
+  [data-theme="gece2"]{--bg:#0f1117;--bg2:#161922;--surface:#191c26;--surface2:#232733;--line:#2c313f;
+    --text:#eef1f7;--muted:#838ba0;--accent:#ff6a00;--accent2:#ff8a3d;--luna:#ffb340;
+    --grad:linear-gradient(135deg,#ff7a1a,#ff5400)}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;overflow:hidden}
-  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);
+  body{font-family:'Poppins',system-ui,sans-serif;background:var(--bg);color:var(--text);
     height:100dvh;display:flex;flex-direction:column;transition:background .35s,color .35s}
-  .ff{font-family:'Fraunces',serif}
+  .ff{font-family:'Poppins',sans-serif;font-weight:600}
   .hide{display:none!important}
   .screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)}
   .topbar{display:flex;align-items:center;gap:12px;padding:14px 16px;
     padding-top:calc(14px + env(safe-area-inset-top));background:var(--surface);
     border-bottom:1px solid var(--line);flex-shrink:0}
-  .topbar .ttl{flex:1;font-family:'Fraunces';font-weight:600;font-size:20px}
-  .av{border-radius:50%;display:grid;place-items:center;font-family:'Fraunces';color:#fff;flex-shrink:0}
+  .topbar .ttl{flex:1;font-family:'Poppins';font-weight:600;font-size:20px}
+  .av{border-radius:50%;display:grid;place-items:center;font-family:'Poppins';font-weight:600;color:#fff;flex-shrink:0;background-size:cover;background-position:center;overflow:hidden}
   .icon-btn{background:none;border:none;color:var(--muted);font-size:21px;padding:8px;cursor:pointer;border-radius:12px;line-height:1}
   .icon-btn:active{background:var(--surface2)}
-  .fab{position:absolute;right:18px;bottom:calc(22px + env(safe-area-inset-bottom));
-    width:58px;height:58px;border-radius:50%;border:none;background:var(--accent);color:#fff;
-    font-size:26px;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer;z-index:5}
+  .fab{position:absolute;right:18px;bottom:calc(78px + env(safe-area-inset-bottom));
+    width:58px;height:58px;border-radius:50%;border:none;background:var(--grad);color:#fff;
+    font-size:26px;box-shadow:0 8px 24px rgba(255,106,0,.35);cursor:pointer;z-index:5}
   .fab:active{transform:scale(.92)}
+
+  /* SPLASH */
+  #splash{align-items:center;justify-content:center;gap:18px;background:radial-gradient(120% 120% at 50% 0%,var(--bg2),var(--bg));z-index:90}
+  #splash .logo{width:92px;height:92px;border-radius:24px;background:var(--grad);display:grid;place-items:center;
+    font-weight:700;font-size:40px;color:#fff;box-shadow:0 12px 36px rgba(255,106,0,.4)}
+  #splash .logo .lunad{width:9px;height:9px;background:#fff3d6;border-radius:50%;position:relative;top:14px;left:2px}
+  #splash .sp{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
   /* AUTH */
   #auth{align-items:center;justify-content:center;padding:30px;text-align:center;gap:6px;
     background:radial-gradient(120% 120% at 50% 0%,var(--bg2),var(--bg))}
-  .brand{font-family:'Fraunces';font-size:12px;letter-spacing:.5em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  #auth h1{font-family:'Fraunces';font-style:italic;font-weight:500;font-size:38px;margin:0 0 4px}
+  .brand{font-weight:600;font-size:12px;letter-spacing:.5em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  #auth h1{font-family:'Poppins';font-weight:600;font-size:34px;margin:0 0 4px}
   #auth p.sub{color:var(--muted);font-size:14px;margin:0 0 22px;max-width:300px}
   .field{width:100%;max-width:330px;text-align:left;margin-bottom:12px}
   .field label{font-size:12px;color:var(--muted);margin-left:6px}
   .field input{width:100%;margin-top:5px;border:1px solid var(--line);background:var(--surface);
-    color:var(--text);border-radius:14px;padding:13px 16px;font-family:'Inter';font-size:16px;outline:none}
+    color:var(--text);border-radius:14px;padding:13px 16px;font-family:'Poppins';font-size:16px;outline:none}
   .field input:focus{border-color:var(--accent)}
   .colors{display:flex;gap:10px;max-width:330px;flex-wrap:wrap;margin:6px 0 16px;justify-content:center}
   .colors button{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer}
   .colors button.sel{border-color:var(--text);transform:scale(1.12)}
-  .btn-main{width:100%;max-width:330px;border:none;background:var(--accent);color:#fff;
-    border-radius:16px;padding:15px;font-family:'Inter';font-weight:600;font-size:16px;cursor:pointer;margin-top:4px}
+  .btn-main{width:100%;max-width:330px;border:none;background:var(--grad);color:#fff;
+    border-radius:16px;padding:15px;font-family:'Poppins';font-weight:600;font-size:16px;cursor:pointer;margin-top:4px}
   .btn-main:active{transform:scale(.98)}
   .switch{margin-top:18px;color:var(--muted);font-size:14px}
   .switch b{color:var(--accent);cursor:pointer}
@@ -62,12 +73,12 @@
   /* LİSTE */
   #list-feed{flex:1;overflow-y:auto}
   .me-strip{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--muted);font-size:13px;border-bottom:1px solid var(--line)}
-  .me-strip b{color:var(--text);font-family:'Fraunces'}
+  .me-strip b{color:var(--text)}
   .reqbox{margin:12px;padding:14px;background:var(--surface2);border-radius:16px}
-  .reqbox h4{margin:0 0 10px;font-family:'Fraunces';font-size:14px}
+  .reqbox h4{margin:0 0 10px;font-weight:600;font-size:14px}
   .req{display:flex;align-items:center;gap:10px;padding:6px 0}
   .req .nm{flex:1;font-size:15px}
-  .req button{border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:'Inter'}
+  .req button{border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:'Poppins'}
   .req .ok{background:var(--accent);color:#fff} .req .no{background:var(--line);color:var(--text)}
   .chat-item{display:flex;align-items:center;gap:13px;padding:13px 16px;cursor:pointer;border-bottom:1px solid var(--line)}
   .chat-item:active{background:var(--surface2)}
@@ -76,17 +87,28 @@
   .chat-item .pv{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
   .chat-item .right{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
   .chat-item .tm{font-size:11px;color:var(--muted)}
-  .badge{background:var(--accent2);color:#fff;font-size:11px;min-width:20px;height:20px;border-radius:11px;
+  .badge{background:var(--grad);color:#fff;font-size:11px;min-width:20px;height:20px;border-radius:11px;
     display:grid;place-items:center;padding:0 6px;font-weight:600}
   .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
-  .dot.on{background:#4caf6d}
+  .dot.on{background:#43c46f}
   .empty{margin:auto;text-align:center;color:var(--muted);padding:50px}
   .empty .big{font-size:40px;margin-bottom:10px}
+
+  /* TAB BAR */
+  .tabbar{display:flex;background:var(--surface);border-top:1px solid var(--line);flex-shrink:0;
+    padding-bottom:env(safe-area-inset-bottom)}
+  .tabbtn{flex:1;background:none;border:none;color:var(--muted);font-size:21px;padding:9px 0 6px;
+    display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+  .tabbtn span{font-size:11px;font-family:'Poppins';font-weight:500}
+  .tabbtn.active{color:var(--accent)}
+  .tabbtn .ic{position:relative}
+  .tabbtn .tabbadge{position:absolute;top:-4px;right:-9px;background:var(--grad);color:#fff;font-size:10px;
+    min-width:16px;height:16px;border-radius:9px;display:grid;place-items:center;padding:0 4px;font-weight:600}
 
   /* SOHBET */
   #feed{flex:1;overflow-y:auto;padding:16px 12px 6px;display:flex;flex-direction:column;gap:3px}
   .daysep{align-self:center;font-size:11px;color:var(--muted);background:var(--surface);padding:4px 12px;border-radius:20px;margin:12px 0 8px}
-  .row{display:flex;max-width:84%}
+  .row{display:flex;max-width:84%;position:relative}
   .row.me{align-self:flex-end} .row.you{align-self:flex-start}
   .bubble{padding:9px 13px;border-radius:18px;font-size:15.5px;line-height:1.4;word-wrap:break-word;
     white-space:pre-wrap;animation:pop .16s ease}
@@ -107,8 +129,8 @@
     padding-bottom:calc(9px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--line)}
   .composer .tool{background:none;border:none;color:var(--muted);font-size:23px;padding:7px;cursor:pointer}
   .composer textarea{flex:1;resize:none;border:1px solid var(--line);background:var(--bg2);color:var(--text);
-    border-radius:20px;padding:10px 15px;font-family:'Inter';font-size:15.5px;max-height:120px;line-height:1.35;outline:none}
-  .send{width:44px;height:44px;border-radius:50%;border:none;background:var(--accent);color:#fff;
+    border-radius:20px;padding:10px 15px;font-family:'Poppins';font-size:15.5px;max-height:120px;line-height:1.35;outline:none}
+  .send{width:44px;height:44px;border-radius:50%;border:none;background:var(--grad);color:#fff;
     font-size:19px;cursor:pointer;flex-shrink:0;display:grid;place-items:center}
   .send:active{transform:scale(.9)} .send:disabled{opacity:.4}
   .stickerbar{display:flex;flex-wrap:wrap;gap:4px;padding:10px;background:var(--surface);border-top:1px solid var(--line);max-height:200px;overflow-y:auto}
@@ -121,11 +143,17 @@
   .sheet .card{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:22px 22px 0 0;
     padding:22px 20px;padding-bottom:calc(22px + env(safe-area-inset-bottom));animation:up .25s}
   @keyframes up{from{transform:translateY(100%)}}
-  .sheet h3{font-family:'Fraunces';margin:0 0 14px;font-size:19px}
+  .sheet h3{font-weight:600;margin:0 0 14px;font-size:19px}
+  .prof{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .prof .av{width:58px;height:58px;font-size:24px}
+  .prof .pname{font-weight:600;font-size:16px}
+  .prof .puser{font-size:13px;color:var(--muted)}
+  .prof .change{margin-left:auto;border:1px solid var(--line);background:var(--bg2);color:var(--text);
+    padding:9px 13px;border-radius:12px;font-size:13px;font-family:'Poppins';cursor:pointer}
   .seg{display:flex;gap:8px;margin-bottom:16px}
-  .seg button{flex:1;border:1px solid var(--line);background:var(--bg2);color:var(--text);padding:11px;border-radius:13px;font-size:14px;cursor:pointer}
-  .seg button.active{border-color:var(--luna);background:var(--surface2)}
-  .sheet .danger{width:100%;border:1px solid var(--line);background:none;color:var(--muted);padding:12px;border-radius:13px;font-size:14px;cursor:pointer;margin-top:4px}
+  .seg button{flex:1;border:1px solid var(--line);background:var(--bg2);color:var(--text);padding:11px;border-radius:13px;font-size:14px;cursor:pointer;font-family:'Poppins'}
+  .seg button.active{border-color:var(--accent);background:var(--surface2)}
+  .sheet .danger{width:100%;border:1px solid var(--line);background:none;color:var(--muted);padding:12px;border-radius:13px;font-size:14px;cursor:pointer;margin-top:4px;font-family:'Poppins'}
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
   .lightbox.open{display:flex} .lightbox img{max-width:100%;max-height:100%;border-radius:10px}
   .toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translateX(-50%);
@@ -140,9 +168,8 @@
     border-radius:16px;padding:12px 16px;box-shadow:0 8px 28px rgba(0,0,0,.45);
     transform:translateY(-160%);opacity:0;transition:transform .3s ease,opacity .3s ease;cursor:pointer}
   .inbanner.show{transform:translateY(0);opacity:1}
-  .inbanner .ib-t{font-family:'Fraunces';font-weight:600;font-size:15px;margin-bottom:2px}
+  .inbanner .ib-t{font-weight:600;font-size:15px;margin-bottom:2px}
   .inbanner .ib-b{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .row{position:relative}
   .msgmenu{position:absolute;top:-2px;background:none;border:none;color:var(--muted);
     font-size:16px;line-height:1;padding:4px 6px;cursor:pointer;opacity:.55}
   .row.me .msgmenu{left:-26px} .row.you .msgmenu{right:-26px}
@@ -151,23 +178,30 @@
   .acts .veil{position:absolute;inset:0;background:rgba(0,0,0,.5)}
   .acts .card{position:absolute;left:10px;right:10px;bottom:0;background:var(--surface);
     border-radius:20px;margin-bottom:calc(10px + env(safe-area-inset-bottom));overflow:hidden;animation:up .22s}
-  .acts .ah{padding:14px 18px 8px;font-size:13px;color:var(--muted);font-family:'Fraunces'}
+  .acts .ah{padding:14px 18px 8px;font-size:13px;color:var(--muted);font-weight:600}
   .acts button.ai{width:100%;text-align:left;background:none;border:none;color:var(--text);
-    padding:15px 18px;font-size:16px;font-family:'Inter';cursor:pointer;border-top:1px solid var(--line)}
+    padding:15px 18px;font-size:16px;font-family:'Poppins';cursor:pointer;border-top:1px solid var(--line)}
   .acts button.ai:active{background:var(--surface2)}
   .acts button.ai.danger{color:#e2706a}
   .acts .cancel{margin-top:8px;border-radius:16px}
-  .pin{font-size:12px;color:var(--luna);margin-left:4px}
+  .pin{font-size:12px;color:var(--luna)}
+  .mutei{font-size:12px}
   .archline{display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--muted);
     border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
   .archline:active{background:var(--surface2)}
 </style>
 </head>
 <body data-theme="gece">
-<div class="warn" id="warn">⚠️ Firebase config girilmemiş — kayıt/mesaj çalışmaz. Aşağıdaki BURAYA'ları doldur.</div>
+<div class="warn" id="warn">⚠️ Firebase config girilmemiş — kayıt/mesaj çalışmaz.</div>
+
+<!-- ===== SPLASH ===== -->
+<div class="screen" id="splash">
+  <div class="logo">NS<span class="lunad"></span></div>
+  <div class="sp"></div>
+</div>
 
 <!-- ===== AUTH ===== -->
-<div class="screen" id="auth">
+<div class="screen hide" id="auth">
   <div class="brand">NS · MESAJ</div>
   <h1 class="ff" id="authTitle">hesabını aç</h1>
   <p class="sub" id="authSub">Bir kullanıcı adı seç — arkadaşların seni bununla ekleyecek.</p>
@@ -183,15 +217,24 @@
 <!-- ===== LİSTE ===== -->
 <div class="screen hide" id="list">
   <div class="topbar">
-    <div class="ttl">Sohbetler</div>
-    <button class="icon-btn" id="addBtn">＋</button>
+    <div class="ttl" id="listTitle">Sohbetler</div>
     <button class="icon-btn" id="gearBtn">⚙︎</button>
   </div>
   <div class="me-strip" id="meStrip"></div>
   <div id="list-feed">
-    <div id="reqArea"></div>
-    <div id="chatList"></div>
-    <div class="empty" id="listEmpty"><div class="big">🕊️</div>Henüz arkadaşın yok.<br>＋ ile kullanıcı adıyla ekle.</div>
+    <div id="chatsTab">
+      <div id="chatList"></div>
+      <div class="empty" id="chatsEmpty"><div class="big">💬</div>Henüz sohbet yok.<br>Arkadaşlar sekmesinden birine yaz.</div>
+    </div>
+    <div id="friendsTab" class="hide">
+      <div id="reqArea"></div>
+      <div id="friendList"></div>
+      <div class="empty" id="friendsEmpty"><div class="big">🕊️</div>Henüz arkadaşın yok.<br>＋ ile kullanıcı adıyla ekle.</div>
+    </div>
+  </div>
+  <div class="tabbar">
+    <button class="tabbtn active" data-tab="chats"><span class="ic">💬<span class="tabbadge hide" id="chatsTabBadge"></span></span><span>Sohbetler</span></button>
+    <button class="tabbtn" data-tab="friends"><span class="ic">👥<span class="tabbadge hide" id="friendsTabBadge"></span></span><span>Arkadaşlar</span></button>
   </div>
 </div>
 
@@ -202,8 +245,9 @@
     <div class="av" id="cAv" style="width:38px;height:38px;font-size:17px"></div>
     <div class="ttl" style="font-size:17px">
       <div id="cName"></div>
-      <div style="font-size:12px;color:var(--muted);font-family:'Inter';font-weight:400" id="cStatus"></div>
+      <div style="font-size:12px;color:var(--muted);font-weight:400" id="cStatus"></div>
     </div>
+    <button class="icon-btn" id="chatMenuBtn">⋮</button>
   </div>
   <div id="feed"></div>
   <div class="stickerbar hide" id="stickerbar"></div>
@@ -221,31 +265,33 @@
   <div class="veil" id="veil"></div>
   <div class="card">
     <h3>Ayarlar</h3>
+    <div class="prof">
+      <div class="av" id="profAv"></div>
+      <div>
+        <div class="pname" id="profName"></div>
+        <div class="puser" id="profUser"></div>
+      </div>
+      <button class="change" id="photoMeBtn">Fotoğraf</button>
+    </div>
     <div class="seg" id="themeSeg">
-      <button data-t="gece">Gece</button><button data-t="gunduz">Gündüz</button><button data-t="gunbatimi">Gün batımı</button>
+      <button data-t="gece">Turuncu</button><button data-t="gece2">Gece</button><button data-t="gunduz">Gündüz</button>
     </div>
     <button class="danger" id="notifBtn">🔔 Bildirimlere izin ver</button>
     <button class="danger" id="logoutBtn">Çıkış yap</button>
   </div>
 </div>
+<input type="file" id="avatarIn" accept="image/*" class="hide">
 
 <div class="lightbox" id="lightbox"><img id="lightImg" src=""></div>
 <div class="acts" id="acts"><div class="veil" id="actsVeil"></div><div class="card" id="actsCard"></div></div>
 <div class="toast" id="toast"></div>
-
 <button class="fab hide" id="fab">＋</button>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
-/* Web Push (FCM) anahtarı — Firebase > Cloud Messaging > Web Push sertifikaları */
 const VAPID_KEY="BOmshf6owstM8pExEUVvKW1-Ds2ACWqw8cx-dhtUJdin3XSZJmvdcwKrP9BQz9ZCb98fk_fafqZRuFLtAiviZVE";
-/* ============================================================
-   FIREBASE CONFIG — DOLDUR
-   console.firebase.google.com → Proje → Realtime Database (Test modu)
-   → Proje ayarları → Uygulama ekle → Web → config'i buraya yapıştır
-============================================================ */
 const firebaseConfig = {
   apiKey: "AIzaSyDhtihZfZzwFk1cGCRbaQmF1VS414SW7yI",
   authDomain: "ns-mesaj-b19a7.firebaseapp.com",
@@ -255,13 +301,17 @@ const firebaseConfig = {
   messagingSenderId: "39713613784",
   appId: "1:39713613784:web:d17c4656bc04096ce1f4ad"
 };
+const PUSH_WORKER="https://ns-push.samet-ak09-07.workers.dev";
 
-const COLORS=["#4f8a79","#c2718a","#cf7a52","#5a78c2","#9a6fbf","#3f9a8a","#c0863f","#bf5f5f"];
+const COLORS=["#ff7a1a","#c2718a","#cf7a52","#5a78c2","#9a6fbf","#3f9a8a","#c0863f","#bf5f5f"];
 const STICKERS=["❤️","😘","🥰","😍","😂","🤗","😴","👍","🎉","🌹","☕","🍕","🐦","💚","🙈","😢","🔥","💋","🤙","🫶"];
 let db=null, me=null, isLogin=false, pickedColor=COLORS[0];
-let curChat=null, curFriend=null, chatListeners={}, friends={}, unread={}, lastMsgTs={}, friendUsers={};
+let curChat=null, curFriend=null;
+let friends={}, friendUsers={}, requestsData={};
+let chatListeners={}, presenceListeners={};
+let unread={}, lastActivity={}, lastPreviewText={}, lastMsgKey={}, onlineSet={};
+let pinnedSet={}, archivedSet={}, mutedSet={}, showArchive=false, currentTab="chats";
 let curMsgs=[], myHidden={}, hiddenRef=null, curSeenTs=0;
-let pinnedSet={}, archivedSet={}, showArchive=false;
 let typingTimer=null, lastSeenEl=null, lastMineTs=0, typingEl=null, lastDay="";
 
 const $=id=>document.getElementById(id);
@@ -275,18 +325,21 @@ function toast(t){ const e=$("toast"); e.textContent=t; e.classList.add("show");
 function chatId(a,b){ return [a,b].sort().join("__"); }
 async function hash(s){ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
   return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join(""); }
-function show(scr){ ["auth","list","chat"].forEach(s=>$(s).classList.toggle("hide",s!==scr)); }
-function avatar(el,name,color,size){ el.style.width=size+"px"; el.style.height=size+"px";
-  el.style.fontSize=(size*0.42)+"px"; el.style.background=color||"#666"; el.textContent=(name||"?")[0].toUpperCase(); }
+function show(scr){ ["splash","auth","list","chat"].forEach(s=>$(s).classList.toggle("hide",s!==scr)); }
+function avatar(el,u,size){ el.style.width=size+"px"; el.style.height=size+"px";
+  if(u && u.photo){ el.style.backgroundImage="url("+u.photo+")"; el.textContent=""; }
+  else { el.style.backgroundImage="none"; el.style.fontSize=(size*0.42)+"px";
+    el.style.background=(u&&u.color)||"#666"; el.textContent=((u&&u.name)||"?")[0].toUpperCase(); } }
 function fmtTime(ts){ return new Date(ts).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}); }
 function dayLabel(d){ const t=new Date(),y=new Date(); y.setDate(t.getDate()-1);
   if(d.toDateString()===t.toDateString())return"Bugün"; if(d.toDateString()===y.toDateString())return"Dün";
   return d.toLocaleDateString("tr-TR",{day:"numeric",month:"long"}); }
+function preview(m){ return m.deleted?"🚫 Mesaj silindi":m.type==="image"?"📷 Fotoğraf":m.type==="sticker"?"🌟 Çıkartma":m.text; }
 
 /* ---------- tema ---------- */
 function setTheme(t){ document.body.dataset.theme=t; localStorage.setItem("ns_theme",t);
   document.querySelectorAll("#themeSeg button").forEach(b=>b.classList.toggle("active",b.dataset.t===t));
-  const c={gece:"#15131c",gunduz:"#f6f1e9",gunbatimi:"#1c1218"}[t];
+  const c={gece:"#14161f",gece2:"#0f1117",gunduz:"#f6f3ee"}[t]||"#14161f";
   document.querySelector('meta[name=theme-color]').setAttribute("content",c); }
 
 /* ---------- AUTH ekranı ---------- */
@@ -322,8 +375,10 @@ async function doAuth(){
     await db.ref("users/"+u).set(rec); enter(u,rec);
   }
 }
-function enter(u,rec){ me={user:u,name:rec.name,color:rec.color}; localStorage.setItem("ns_user",u); localStorage.setItem("ns_pin",rec.pin);
-  show("list"); $("fab").classList.remove("hide"); initApp(); }
+function enter(u,rec){ me={user:u,name:rec.name,color:rec.color,photo:rec.photo||null};
+  friendUsers[u]=me;
+  localStorage.setItem("ns_user",u); localStorage.setItem("ns_pin",rec.pin);
+  switchTab("chats"); show("list"); initApp(); }
 
 async function autoLogin(){
   const u=localStorage.getItem("ns_user"), p=localStorage.getItem("ns_pin"); if(!u||!p||!db) return false;
@@ -333,40 +388,123 @@ async function autoLogin(){
 
 /* ---------- UYGULAMA ---------- */
 function initApp(){
-  avatar($("meStrip").appendChild(Object.assign(document.createElement("div"),{className:"av"})),me.name,me.color,30);
-  $("meStrip").insertAdjacentHTML("beforeend",`<span>Giriş: <b>${me.name}</b> · @${me.user}</span>`);
-  // online
+  refreshMeStrip();
   const pr=db.ref("presence/"+me.user); pr.set({online:true,ts:firebase.database.ServerValue.TIMESTAMP});
   pr.onDisconnect().set({online:false,ts:firebase.database.ServerValue.TIMESTAMP});
-  // arkadaş listesi
-  db.ref("friends/"+me.user).on("value",s=>{ friends=s.val()||{}; renderFriends(); });
-  // istekler
-  db.ref("requests/"+me.user).on("value",s=>renderRequests(s.val()||{}));
-  // sabitlenen / arşivlenen tercihleri
-  db.ref("prefs/"+me.user+"/pinned").on("value",s=>{ pinnedSet=s.val()||{}; renderFriends(); });
-  db.ref("prefs/"+me.user+"/archived").on("value",s=>{ archivedSet=s.val()||{}; renderFriends(); });
-  // bildirim izni iste
+  db.ref("friends/"+me.user).on("value",s=>{ friends=s.val()||{}; syncFriends(); });
+  db.ref("requests/"+me.user).on("value",s=>{ requestsData=s.val()||{}; renderFriendsTab(); updateTabBadges(); });
+  db.ref("prefs/"+me.user+"/pinned").on("value",s=>{ pinnedSet=s.val()||{}; renderChats(); });
+  db.ref("prefs/"+me.user+"/archived").on("value",s=>{ archivedSet=s.val()||{}; renderChats(); });
+  db.ref("prefs/"+me.user+"/muted").on("value",s=>{ mutedSet=s.val()||{}; renderChats(); renderFriendsTab(); });
   if("Notification" in window && Notification.permission==="default") Notification.requestPermission();
   registerPush();
 }
+function refreshMeStrip(){ const s=$("meStrip"); s.innerHTML="";
+  const av=document.createElement("div"); av.className="av"; s.appendChild(av); avatar(av,me,30);
+  s.insertAdjacentHTML("beforeend",`<span>Giriş: <b>${me.name}</b> · @${me.user}</span>`);
+  if($("profAv")){ avatar($("profAv"),me,58); $("profName").textContent=me.name; $("profUser").textContent="@"+me.user; }
+}
 
-/* ---------- kapalı-uygulama bildirimi: token al + kaydet ---------- */
+/* ---------- kapalı-uygulama bildirimi ---------- */
 async function registerPush(){
   try{
     if(!("serviceWorker" in navigator) || !firebase.messaging) return;
-    if(Notification.permission!=="granted"){
-      const p=await Notification.requestPermission(); if(p!=="granted") return;
-    }
+    if(Notification.permission!=="granted"){ const p=await Notification.requestPermission(); if(p!=="granted") return; }
     const reg=await navigator.serviceWorker.register("./firebase-messaging-sw.js");
     const messaging=firebase.messaging();
     const token=await messaging.getToken({vapidKey:VAPID_KEY, serviceWorkerRegistration:reg});
     if(token){ await db.ref("pushTokens/"+me.user+"/"+token).set(true); }
-    // uygulama önizmeyken gelen bildirimi göster
-    messaging.onMessage(p=>{ const n=p.notification||{};
-      if(document.hidden){ try{ new Notification(n.title||"NS-Mesaj",{body:n.body||"",icon:"./icon-192.png"}); }catch(e){} } });
+    // uygulama açık/önplandayken push'u yok say (çift bildirimi önler; içeride banner zaten gösteriliyor)
+    messaging.onMessage(()=>{});
   }catch(e){ console.warn("push kayıt hatası:", e); }
 }
 
+/* ---------- arkadaşları senkronize et ---------- */
+function syncFriends(){
+  Object.keys(friends).forEach(f=>{
+    if(!friendUsers[f]){
+      db.ref("users/"+f).get().then(s=>{ friendUsers[f]=s.val()||{name:f,color:"#666"}; renderChats(); renderFriendsTab(); });
+    }
+    if(!presenceListeners[f]){ presenceListeners[f]=true;
+      db.ref("presence/"+f).on("value",ps=>{ onlineSet[f]=!!(ps.val()&&ps.val().online);
+        renderChats(); renderFriendsTab(); if(curFriend===f) updateChatStatus(); });
+    }
+    if(!chatListeners[f]){ chatListeners[f]=true;
+      const cid=chatId(me.user,f);
+      db.ref("chats/"+cid+"/messages").orderByChild("ts").limitToLast(1).on("value",snap=>{
+        let m=null; snap.forEach(c=>{ m=c.val(); m._key=c.key; });
+        if(!m){ renderChats(); return; }
+        lastActivity[f]=m.ts||0;
+        lastPreviewText[f]= m.deleted?"🚫 Mesaj silindi":preview(m);
+        if(lastMsgKey[f]!==m._key){
+          const isNew = lastMsgKey[f]!==undefined;
+          lastMsgKey[f]=m._key;
+          const fresh = m.ts && (Date.now()-m.ts < 25000);
+          if(isNew && m.sender!==me.user && fresh && !m.deleted && curFriend!==f){
+            unread[f]=(unread[f]||0)+1;
+            if(!mutedSet[f]) notify((friendUsers[f]&&friendUsers[f].name)||f, m, f);
+          }
+        }
+        renderChats(); updateTabBadges();
+      });
+    }
+  });
+  renderChats(); renderFriendsTab(); updateTabBadges();
+}
+
+/* ---------- SEKMELER ---------- */
+function switchTab(t){ currentTab=t;
+  $("chatsTab").classList.toggle("hide",t!=="chats");
+  $("friendsTab").classList.toggle("hide",t!=="friends");
+  $("listTitle").textContent = t==="chats"?"Sohbetler":"Arkadaşlar";
+  document.querySelectorAll(".tabbtn").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  $("fab").classList.toggle("hide", t!=="friends");
+}
+function updateTabBadges(){
+  const totUnread=Object.values(unread).reduce((a,b)=>a+(b||0),0);
+  const cb=$("chatsTabBadge"); if(cb){ cb.textContent=totUnread; cb.classList.toggle("hide",totUnread<=0); }
+  const reqN=Object.keys(requestsData).length;
+  const fb=$("friendsTabBadge"); if(fb){ fb.textContent=reqN; fb.classList.toggle("hide",reqN<=0); }
+}
+
+/* ---------- SOHBETLER sekmesi ---------- */
+function sortConv(a,b){ const pa=pinnedSet[a]?1:0,pb=pinnedSet[b]?1:0;
+  if(pa!==pb) return pb-pa; return (lastActivity[b]||0)-(lastActivity[a]||0); }
+function mkArchLine(text,on){ const al=document.createElement("div"); al.className="archline"; al.textContent=text; al.onclick=on; return al; }
+function chatItem(f){
+  const u=friendUsers[f]||{name:f,color:"#666"};
+  const item=document.createElement("div"); item.className="chat-item";
+  item.innerHTML=`<div class="av"></div><div class="info"><div class="nm"></div><div class="pv"></div></div>
+    <div class="right"><span class="tm"></span><span class="bd"></span></div>`;
+  const nm=item.querySelector(".nm"); nm.appendChild(document.createTextNode(u.name+" "));
+  const dot=document.createElement("span"); dot.className="dot"+(onlineSet[f]?" on":""); nm.appendChild(dot);
+  if(pinnedSet[f]){ const p=document.createElement("span"); p.className="pin"; p.textContent="📌"; nm.appendChild(p); }
+  if(mutedSet[f]){ const mm=document.createElement("span"); mm.className="mutei"; mm.textContent="🔕"; nm.appendChild(mm); }
+  item.querySelector(".pv").textContent=lastPreviewText[f]||"";
+  item.querySelector(".tm").textContent=lastActivity[f]?fmtTime(lastActivity[f]):"";
+  if(unread[f]) item.querySelector(".bd").innerHTML=`<span class="badge">${unread[f]}</span>`;
+  avatar(item.querySelector(".av"),u,46);
+  item.onclick=()=>openChat(f,u); bindHold(item,()=>chatMenu(f));
+  return item;
+}
+function renderChats(){
+  const list=$("chatList"); if(!list) return;
+  const all=Object.keys(friends);
+  const conv=all.filter(f=>lastActivity[f]!==undefined && !archivedSet[f]).sort(sortConv);
+  const archivedConv=all.filter(f=>lastActivity[f]!==undefined && archivedSet[f]).sort(sortConv);
+  list.innerHTML="";
+  if(showArchive){
+    list.appendChild(mkArchLine("‹ Sohbetlere dön",()=>{showArchive=false;renderChats();}));
+    archivedConv.forEach(f=>list.appendChild(chatItem(f)));
+    $("chatsEmpty").classList.add("hide");
+    return;
+  }
+  conv.forEach(f=>list.appendChild(chatItem(f)));
+  if(archivedConv.length) list.appendChild(mkArchLine("🗄️ Arşivlenenler ("+archivedConv.length+")",()=>{showArchive=true;renderChats();}));
+  $("chatsEmpty").classList.toggle("hide", conv.length>0 || archivedConv.length>0);
+}
+
+/* ---------- ARKADAŞLAR sekmesi ---------- */
 function renderRequests(reqs){
   const area=$("reqArea"); const keys=Object.keys(reqs);
   if(!keys.length){ area.innerHTML=""; return; }
@@ -376,61 +514,31 @@ function renderRequests(reqs){
     <button class="no" onclick="reject('${k}')">Sil</button></div>`; });
   area.innerHTML=h+"</div>";
 }
+function renderFriendsTab(){
+  renderRequests(requestsData);
+  const list=$("friendList"); if(!list) return; list.innerHTML="";
+  const all=Object.keys(friends).sort((a,b)=>{
+    const na=((friendUsers[a]&&friendUsers[a].name)||a).toLowerCase();
+    const nb=((friendUsers[b]&&friendUsers[b].name)||b).toLowerCase();
+    return na<nb?-1:na>nb?1:0; });
+  $("friendsEmpty").classList.toggle("hide", all.length>0);
+  all.forEach(f=>{
+    const u=friendUsers[f]||{name:f,color:"#666"};
+    const item=document.createElement("div"); item.className="chat-item";
+    item.innerHTML=`<div class="av"></div><div class="info"><div class="nm"></div><div class="pv">@${f}</div></div><div class="right"></div>`;
+    const nm=item.querySelector(".nm"); nm.appendChild(document.createTextNode(u.name+" "));
+    const dot=document.createElement("span"); dot.className="dot"+(onlineSet[f]?" on":""); nm.appendChild(dot);
+    if(mutedSet[f]){ const mm=document.createElement("span"); mm.className="mutei"; mm.textContent="🔕"; nm.appendChild(mm); }
+    avatar(item.querySelector(".av"),u,46);
+    item.onclick=()=>openChat(f,u); bindHold(item,()=>chatMenu(f));
+    list.appendChild(item);
+  });
+}
 window.accept=async k=>{ await db.ref("friends/"+me.user+"/"+k).set(true);
   await db.ref("friends/"+k+"/"+me.user).set(true); await db.ref("requests/"+me.user+"/"+k).remove(); toast("@"+k+" eklendi"); };
 window.reject=async k=>{ await db.ref("requests/"+me.user+"/"+k).remove(); };
 
-function renderFriends(){
-  let keys=Object.keys(friends);
-  const archived = keys.filter(f=>archivedSet[f]);
-  let visible = showArchive ? archived : keys.filter(f=>!archivedSet[f]);
-  visible.sort((a,b)=> (pinnedSet[b]?1:0)-(pinnedSet[a]?1:0));
-  $("listEmpty").classList.toggle("hide", keys.length>0);
-  const list=$("chatList"); list.innerHTML="";
-  if(!showArchive && archived.length){
-    const al=document.createElement("div"); al.className="archline";
-    al.textContent="🗄️ Arşivlenenler ("+archived.length+")";
-    al.onclick=()=>{ showArchive=true; renderFriends(); }; list.appendChild(al);
-  }
-  if(showArchive){
-    const al=document.createElement("div"); al.className="archline";
-    al.textContent="‹ Sohbetlere dön"; al.onclick=()=>{ showArchive=false; renderFriends(); }; list.appendChild(al);
-  }
-  visible.forEach(f=>{
-    const item=document.createElement("div"); item.className="chat-item"; item.id="ci_"+f;
-    item.innerHTML=`<div class="av"></div><div class="info"><div class="nm" id="nm_${f}"></div>
-      <div class="pv" id="pv_${f}">@${f}</div></div>
-      <div class="right"><span class="tm" id="tm_${f}"></span><span id="bd_${f}"></span></div>`;
-    list.appendChild(item);
-    item.onclick=()=>{ if(friendUsers[f]) openChat(f,friendUsers[f]); };
-    bindHold(item, ()=>chatMenu(f));
-    db.ref("users/"+f).get().then(s=>{
-      const u=s.val()||{name:f,color:"#666"}; friendUsers[f]=u;
-      const nm=$("nm_"+f);
-      if(nm) nm.innerHTML=`${u.name} <span class="dot" id="dot_${f}"></span>${pinnedSet[f]?'<span class="pin">📌</span>':''}`;
-      avatar(item.querySelector(".av"),u.name,u.color,46);
-      db.ref("presence/"+f).on("value",ps=>{ const d=$("dot_"+f); if(d) d.classList.toggle("on",!!(ps.val()&&ps.val().online)); });
-    });
-    if(!chatListeners[f]){ chatListeners[f]=true;
-      const cid=chatId(me.user,f);
-      db.ref("chats/"+cid+"/messages").orderByChild("ts").limitToLast(1).on("value",snap=>{
-        let m=null; snap.forEach(c=>{ m=c.val(); m._key=c.key; });
-        if(!m) return;
-        const pv=$("pv_"+f), tm=$("tm_"+f);
-        if(pv) pv.textContent = m.deleted? "🚫 Mesaj silindi" : preview(m); if(tm) tm.textContent=fmtTime(m.ts);
-        if(lastMsgTs[f]===m._key) return;
-        const isNew = lastMsgTs[f]!==undefined;
-        lastMsgTs[f]=m._key;
-        const fresh = m.ts && (Date.now()-m.ts < 25000);
-        if(isNew && m.sender!==me.user && fresh && !m.deleted){
-          if(curFriend!==f){ unread[f]=(unread[f]||0)+1; updateBadge(f); }
-          notify((friendUsers[f]&&friendUsers[f].name)||f, m, f);
-        }
-      });
-    }
-  });
-}
-/* uzun basma algılama */
+/* uzun basma */
 function bindHold(el, fn){
   let t=null;
   const start=()=>{ t=setTimeout(()=>{ try{navigator.vibrate&&navigator.vibrate(40);}catch(e){} fn(); }, 500); };
@@ -439,10 +547,12 @@ function bindHold(el, fn){
   el.addEventListener("touchend",cancel); el.addEventListener("touchmove",cancel);
   el.addEventListener("contextmenu",e=>{ e.preventDefault(); fn(); });
 }
-/* sohbet menüsü (sabitle/arşivle/temizle) */
+/* sohbet menüsü */
 function chatMenu(f){
   const u=friendUsers[f]||{name:f};
   const items=[
+    { label: mutedSet[f] ? "🔔 Sesi aç" : "🔕 Sessize al",
+      on:()=>db.ref("prefs/"+me.user+"/muted/"+f).set(mutedSet[f]?null:true) },
     { label: pinnedSet[f] ? "📌 Sabiti kaldır" : "📌 Sabitle",
       on:()=>db.ref("prefs/"+me.user+"/pinned/"+f).set(pinnedSet[f]?null:true) },
     { label: archivedSet[f] ? "🗄️ Arşivden çıkar" : "🗄️ Arşivle",
@@ -454,20 +564,15 @@ function chatMenu(f){
 function clearChat(f){
   if(!confirm("Bu sohbetteki tüm mesajlar silinsin mi? (iki tarafta da kalkar)")) return;
   const cid=chatId(me.user,f);
-  db.ref("chats/"+cid+"/messages").remove();
-  db.ref("chats/"+cid+"/hidden").remove();
-  lastMsgTs[f]=undefined;
-  const pv=$("pv_"+f); if(pv) pv.textContent="@"+f; const tm=$("tm_"+f); if(tm) tm.textContent="";
-  toast("Sohbet temizlendi");
+  db.ref("chats/"+cid+"/messages").remove(); db.ref("chats/"+cid+"/hidden").remove();
+  lastMsgKey[f]=undefined; lastActivity[f]=undefined; lastPreviewText[f]="";
+  renderChats(); toast("Sohbet temizlendi");
 }
-function preview(m){ return m.deleted?"🚫 Mesaj silindi":m.type==="image"?"📷 Fotoğraf":m.type==="sticker"?"🌟 Çıkartma":m.text; }
-function updateBadge(f){ const b=$("bd_"+f); if(!b)return;
-  b.innerHTML = unread[f]? `<span class="badge">${unread[f]}</span>`:""; }
 
 /* ---------- arkadaş ekle ---------- */
 window.addFriend=async()=>{
   const u=prompt("Eklemek istediğin kullanıcı adı:"); if(!u) return;
-  const t=u.trim().toLowerCase();
+  const t=u.trim().toLowerCase().replace(/[^a-z0-9_]/g,"");
   if(t===me.user){ toast("Kendini ekleyemezsin"); return; }
   const s=await db.ref("users/"+t).get();
   if(!s.exists()){ toast("Böyle kullanıcı yok"); return; }
@@ -476,24 +581,22 @@ window.addFriend=async()=>{
   toast("@"+t+" kişisine istek gönderildi");
 };
 
-/* ---------- SOHBET ---------- */
-let chatMsgRef=null, chatMsgHandler=null;
+/* ---------- SOHBET ekranı ---------- */
+let chatMsgRef=null, chatMsgHandler=null, chatPresenceRef=null;
 function detachChatView(){
   if(chatMsgRef && chatMsgHandler){ chatMsgRef.off("value", chatMsgHandler); }
   if(hiddenRef){ hiddenRef.off(); }
   chatMsgRef=null; chatMsgHandler=null; hiddenRef=null;
 }
+function updateChatStatus(){ if(curFriend) $("cStatus").textContent = onlineSet[curFriend]?"çevrim içi":"çevrim dışı"; }
 function openChat(f,u){
   detachChatView();
-  curFriend=f; curChat=chatId(me.user,f); unread[f]=0; updateBadge(f);
+  curFriend=f; curChat=chatId(me.user,f); unread[f]=0; renderChats(); updateTabBadges();
   show("chat"); $("fab").classList.add("hide"); $("stickerbar").classList.add("hide");
-  $("cName").textContent=u.name; avatar($("cAv"),u.name,u.color,38);
+  $("cName").textContent=u.name; avatar($("cAv"),u,38); updateChatStatus();
   $("feed").innerHTML=""; lastDay=""; lastSeenEl=null; typingEl=null; curMsgs=[]; curSeenTs=0;
-  db.ref("presence/"+f).on("value",ps=>{ $("cStatus").textContent=(ps.val()&&ps.val().online)?"çevrim içi":"çevrim dışı"; });
-  // bende silinen mesajlar
   hiddenRef = db.ref("chats/"+curChat+"/hidden/"+me.user);
   hiddenRef.on("value", s=>{ myHidden = s.val()||{}; renderFeed(); });
-  // mesajlar — tam yeniden çizim (silme canlı yansır)
   chatMsgRef = db.ref("chats/"+curChat+"/messages").orderByChild("ts").limitToLast(120);
   chatMsgHandler = snap=>{
     curMsgs=[]; snap.forEach(c=>{ const v=c.val(); v._key=c.key; curMsgs.push(v); });
@@ -502,18 +605,17 @@ function openChat(f,u){
     if(last && last.sender===f) db.ref("chats/"+curChat+"/lastRead/"+me.user).set(firebase.database.ServerValue.TIMESTAMP);
   };
   chatMsgRef.on("value", chatMsgHandler);
-  // typing & seen
   db.ref("chats/"+curChat+"/typing/"+f).on("value",s=>toggleTyping(!!s.val()));
   db.ref("chats/"+curChat+"/lastRead/"+f).on("value",s=>{ curSeenTs=s.val()||0; applySeen(); });
   db.ref("chats/"+curChat+"/lastRead/"+me.user).set(firebase.database.ServerValue.TIMESTAMP);
 }
 function backToList(){ detachChatView(); curFriend=null; curChat=null;
-  show("list"); $("fab").classList.remove("hide"); }
+  show("list"); $("fab").classList.toggle("hide", currentTab!=="friends"); }
 
 function renderFeed(){
   const feed=$("feed"); feed.innerHTML=""; lastDay=""; lastSeenEl=null; lastMineTs=0; typingEl=null;
   curMsgs.forEach(m=>{
-    if(myHidden[m._key]) return;               // bende silinmiş
+    if(myHidden[m._key]) return;
     const d=new Date(m.ts||Date.now()); const dk=d.toLocaleDateString("tr-TR");
     if(dk!==lastDay){ lastDay=dk; const s=document.createElement("div"); s.className="daysep"; s.textContent=dayLabel(d); feed.appendChild(s); }
     const mine=m.sender===me.user;
@@ -539,7 +641,6 @@ function renderFeed(){
 function applySeen(){ document.querySelectorAll(".seen").forEach(x=>x.remove());
   if(lastSeenEl && curSeenTs && curSeenTs>=lastMineTs){ const s=document.createElement("div"); s.className="seen"; s.textContent="Görüldü ✓✓"; lastSeenEl.after(s); } }
 
-/* ---- mesaj menüsü ---- */
 function openMsgMenu(key, m){
   const items=[];
   if(m.type==="text"){ items.push({label:"📋 Kopyala", on:()=>{ try{ navigator.clipboard.writeText(m.text); toast("Kopyalandı"); }catch(e){} }}); }
@@ -552,7 +653,6 @@ function toggleTyping(on){ const feed=$("feed");
   if(on&&!typingEl){ typingEl=document.createElement("div"); typingEl.className="typing"; typingEl.innerHTML="<span></span><span></span><span></span>"; feed.appendChild(typingEl); feed.scrollTop=feed.scrollHeight; }
   else if(!on&&typingEl){ typingEl.remove(); typingEl=null; } }
 
-/* ---- genel action sheet ---- */
 function actionSheet(title, items){
   const card=$("actsCard");
   let h=`<div class="ah">${title}</div>`;
@@ -565,13 +665,11 @@ function actionSheet(title, items){
 }
 function closeActs(){ $("acts").classList.remove("open"); }
 
-const PUSH_WORKER="https://ns-push.samet-ak09-07.workers.dev";
+/* ---------- gönderme + push ---------- */
 function notifyPeer(obj){
   try{
-    // text/plain => tarayıcı OPTIONS ön kontrolü yapmaz, POST direkt gider
-    fetch(PUSH_WORKER,{ method:"POST", headers:{"Content-Type":"text/plain"},
-      keepalive:true,
-      body:JSON.stringify({to:curFriend,title:me.name,body:preview(obj)}) }).catch(()=>{});
+    fetch(PUSH_WORKER,{ method:"POST", headers:{"Content-Type":"text/plain"}, keepalive:true,
+      body:JSON.stringify({to:curFriend, from:me.user, title:me.name, body:preview(obj)}) }).catch(()=>{});
   }catch(e){}
 }
 function pushMsg(obj){ obj.ts=firebase.database.ServerValue.TIMESTAMP; db.ref("chats/"+curChat+"/messages").push(obj);
@@ -584,7 +682,7 @@ function onTyping(){ const el=$("msgIn"); el.style.height="auto"; el.style.heigh
   db.ref("chats/"+curChat+"/typing/"+me.user).set(true); clearTimeout(typingTimer);
   typingTimer=setTimeout(()=>db.ref("chats/"+curChat+"/typing/"+me.user).set(false),1500); }
 
-/* ---------- fotoğraf (sıkıştırıp gönder, Storage'sız) ---------- */
+/* ---------- fotoğraf gönder ---------- */
 function onPhoto(e){ const file=e.target.files[0]; if(!file)return;
   const img=new Image(); const rd=new FileReader();
   rd.onload=()=>{ img.onload=()=>{
@@ -595,32 +693,27 @@ function onPhoto(e){ const file=e.target.files[0]; if(!file)return;
     pushMsg({sender:me.user,type:"image",data}); toast("Fotoğraf gönderildi");
   }; img.src=rd.result; }; rd.readAsDataURL(file); e.target.value=""; }
 
-/* ---------- bildirim ---------- */
-function notify(title,m,fromUser){
-  const text = preview(m);
-  // 1) Uygulama içi üstten banner (her zaman)
-  showBanner(title, text, fromUser);
-  // 2) Telefon bildirim paneline düşen sistem bildirimi
-  osNotify(title, text, fromUser);
-}
-async function osNotify(title, text, fromUser){
-  if(!("Notification" in window) || Notification.permission!=="granted") return;
-  const opts={ body:text, icon:"./icon-192.png", badge:"./icon-192.png",
-    tag:"ns-"+(fromUser||""), renotify:true, vibrate:[120,60,120], data:{from:fromUser} };
-  try{
-    let reg = await navigator.serviceWorker.getRegistration();
-    if(!reg) reg = await navigator.serviceWorker.ready;
-    if(reg && reg.showNotification){ await reg.showNotification(title, opts); return; }
-  }catch(e){}
-  try{ new Notification(title, opts); }catch(e){}
-}
+/* ---------- profil fotoğrafı ---------- */
+function onAvatarPick(e){ const file=e.target.files[0]; if(!file)return;
+  const img=new Image(); const rd=new FileReader();
+  rd.onload=()=>{ img.onload=()=>{
+    const sz=128; const c=document.createElement("canvas"); c.width=sz; c.height=sz;
+    const ctx=c.getContext("2d");
+    const s=Math.min(img.width,img.height); const sx=(img.width-s)/2, sy=(img.height-s)/2;
+    ctx.drawImage(img,sx,sy,s,s,0,0,sz,sz);
+    let q=0.7, data=c.toDataURL("image/jpeg",q);
+    while(data.length>30000 && q>0.3){ q-=0.1; data=c.toDataURL("image/jpeg",q); }
+    db.ref("users/"+me.user+"/photo").set(data);
+    me.photo=data; friendUsers[me.user]=me;
+    refreshMeStrip(); toast("Profil fotoğrafı güncellendi");
+  }; img.src=rd.result; }; rd.readAsDataURL(file); e.target.value=""; }
+
+/* ---------- bildirim (uygulama içi banner) ---------- */
+function notify(title,m,fromUser){ showBanner(title, preview(m), fromUser); }
 let bannerTimer=null;
 function showBanner(title, text, fromUser){
   let el=document.getElementById("inbanner");
-  if(!el){
-    el=document.createElement("div"); el.id="inbanner"; el.className="inbanner";
-    document.body.appendChild(el);
-  }
+  if(!el){ el=document.createElement("div"); el.id="inbanner"; el.className="inbanner"; document.body.appendChild(el); }
   el.innerHTML=`<div class="ib-t"></div><div class="ib-b"></div>`;
   el.querySelector(".ib-t").textContent=title;
   el.querySelector(".ib-b").textContent=text;
@@ -636,27 +729,35 @@ function showBanner(title, text, fromUser){
 $("authBtn").onclick=doAuth;
 $("toLogin").onclick=()=>setMode(true);
 [$("inUser"),$("inName"),$("inPin")].forEach(i=>i.addEventListener("keydown",e=>{if(e.key==="Enter")doAuth();}));
-$("addBtn").onclick=()=>window.addFriend(); $("fab").onclick=()=>window.addFriend();
+$("fab").onclick=()=>window.addFriend();
 $("gearBtn").onclick=()=>$("sheet").classList.add("open");
 $("veil").onclick=()=>$("sheet").classList.remove("open");
 $("backBtn").onclick=backToList;
+$("chatMenuBtn").onclick=()=>{ if(curFriend) chatMenu(curFriend); };
 $("sendBtn").onclick=sendText;
 $("msgIn").addEventListener("input",onTyping);
 $("msgIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendText();}});
 $("photoBtn").onclick=()=>$("fileIn").click();
 $("fileIn").addEventListener("change",onPhoto);
+$("photoMeBtn").onclick=()=>$("avatarIn").click();
+$("avatarIn").addEventListener("change",onAvatarPick);
 $("stickerBtn").onclick=()=>$("stickerbar").classList.toggle("hide");
 $("logoutBtn").onclick=()=>{ localStorage.removeItem("ns_user"); localStorage.removeItem("ns_pin"); location.reload(); };
 $("lightbox").onclick=()=>$("lightbox").classList.remove("open");
 $("actsVeil").onclick=closeActs;
-$("notifBtn").onclick=()=>{ if("Notification"in window) Notification.requestPermission().then(p=>toast(p==="granted"?"Bildirim açık":"İzin verilmedi")); };
+$("notifBtn").onclick=()=>{ if("Notification"in window) Notification.requestPermission().then(p=>{ toast(p==="granted"?"Bildirim açık":"İzin verilmedi"); if(p==="granted") registerPush(); }); };
 document.querySelectorAll("#themeSeg button").forEach(b=>b.onclick=()=>setTheme(b.dataset.t));
+document.querySelectorAll(".tabbtn").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 STICKERS.forEach(s=>{ const b=document.createElement("button"); b.textContent=s; b.onclick=()=>sendSticker(s); $("stickerbar").appendChild(b); });
 
 /* ---------- başlat ---------- */
 setTheme(localStorage.getItem("ns_theme")||"gece");
 buildColors(); setMode(false);
-if(configReady) autoLogin();
+(async ()=>{
+  if(!configReady){ show("auth"); return; }
+  const ok=await autoLogin();
+  if(!ok) show("auth");
+})();
 if("serviceWorker"in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});
 </script>
 </body>
