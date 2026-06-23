@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NS-Push Test</title>
+<style>
+body{font-family:system-ui;background:#15131c;color:#ece8f1;padding:20px;line-height:1.5}
+button{background:#4f8a79;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-size:16px;width:100%;margin:10px 0}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid #444;background:#222;color:#fff;font-size:16px;margin:6px 0}
+pre{background:#222;padding:14px;border-radius:10px;white-space:pre-wrap;word-break:break-all;font-size:13px}
+h3{font-weight:600}
+</style></head><body>
+<h3>NS-Push Test</h3>
+<p>Bildirimi alacak kullanıcı adı (token'ı olan, ör. samet):</p>
+<input id="to" value="samet">
+<button onclick="test()">Test bildirimi gönder</button>
+<pre id="out">Sonuç burada görünecek...</pre>
+<script>
+async function test(){
+  const out=document.getElementById("out");
+  out.textContent="Gönderiliyor...";
+  try{
+    const r=await fetch("https://ns-push.samet-ak09-07.workers.dev",{
+      method:"POST", headers:{"Content-Type":"text/plain"},
+      body:JSON.stringify({to:document.getElementById("to").value,title:"Test",body:"NS-Push test bildirimi"})
+    });
+    const t=await r.text();
+    out.textContent="HTTP "+r.status+"\n\n"+t;
+  }catch(e){ out.textContent="HATA: "+e.message; }
+}
+</script>
+</body></html>
