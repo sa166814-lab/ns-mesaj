@@ -15,12 +15,13 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload){
-  const n = payload.notification || {};
-  self.registration.showNotification(n.title || "NS-Mesaj", {
-    body: n.body || "Yeni mesaj",
+  const d = payload.data || {};
+  self.registration.showNotification(d.title || "NS-Mesaj", {
+    body: d.body || "Yeni mesaj",
     icon: "./icon-192.png",
     badge: "./icon-192.png",
-    tag: "ns-mesaj"
+    tag: "ns-mesaj",
+    renotify: true
   });
 });
 
