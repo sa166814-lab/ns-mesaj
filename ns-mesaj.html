@@ -568,8 +568,10 @@ function closeActs(){ $("acts").classList.remove("open"); }
 const PUSH_WORKER="https://ns-push.samet-ak09-07.workers.dev";
 function notifyPeer(obj){
   try{
-    fetch(PUSH_WORKER,{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({to:curFriend,title:me.name,body:preview(obj)})}).catch(()=>{});
+    // text/plain => tarayıcı OPTIONS ön kontrolü yapmaz, POST direkt gider
+    fetch(PUSH_WORKER,{ method:"POST", headers:{"Content-Type":"text/plain"},
+      keepalive:true,
+      body:JSON.stringify({to:curFriend,title:me.name,body:preview(obj)}) }).catch(()=>{});
   }catch(e){}
 }
 function pushMsg(obj){ obj.ts=firebase.database.ServerValue.TIMESTAMP; db.ref("chats/"+curChat+"/messages").push(obj);
